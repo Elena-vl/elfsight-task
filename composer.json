@@ -6,12 +6,17 @@
     "license": "MIT",
     "require": {
         "php": "^8.0.2",
+        "ext-readline": "*",
+        "certifiedwebninja/caroline": "1.0.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "nickbeen/rick-and-morty-api-php": "master",
+        "rubix/sentiment": "^7.0"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.0.1",
@@ -61,5 +66,11 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/nickbeen/rick-and-morty-api-php.git"
+        }
+    ]
 }
