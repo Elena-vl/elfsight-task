@@ -1,8 +1,10 @@
 # Развертывание проекта
 
-1. `composer install`
-2. При разработке использовался Laravel Sail. Команда запуска `./vendor/bin/sail up`
-3. Запуск миграций `php artisan migrate`
+1. Копировать .env: `php -r "file_exists('.env') || copy('.env.example', '.env');"`
+2. Установить зависимости: `composer install`
+3. Сгенерировать ключ: php artisan key:generate
+4. При разработке использовался Laravel Sail. Команда запуска `./vendor/bin/sail up`
+5. Запуск миграций `php artisan migrate`
 
 ## Используемые библиотеки
 
