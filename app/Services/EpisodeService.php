@@ -22,15 +22,20 @@ class EpisodeService
      *
      * @param  FetchResourcesRequest  $request
      *
-     * @return array
+     * @return object
      * @throws NotFoundException
      */
-    public function getListData(FetchResourcesRequest $request): array
+    public function getListData(FetchResourcesRequest $request): object
     {
         $episode = new Episode();
         $episodes = $episode->page($request->pageNumber())->get();
 
-        return (new EpisodeResource)->collection($episodes);
+        $resource = EpisodeResource::collection(collect($episodes->results));
+        $resource->additional([
+            'meta' => $episodes->info,
+        ]);
+
+        return $resource;
     }
 
     /**
@@ -38,10 +43,10 @@ class EpisodeService
      *
      * @param  int  $id
      *
-     * @return array
+     * @return object
      * @throws NotFoundException
      */
-    public function getItemData(int $id): array
+    public function getItemData(int $id): object
     {
         $episodes = new Episode();
         /** @var \NickBeen\RickAndMortyPhpApi\Dto\Episode $episode */
@@ -53,6 +58,10 @@ class EpisodeService
         $avgRating = $reviewsSql->avg('rating');
         $reviews = $reviewsSql->orderByDesc('rating')->limit(3)->get();
 
-        return (new EpisodeResource)->instance($episode, $reviews, $avgRating);
+        $resource = new EpisodeResource($episode);
+        $resource->setAvgRating($avgRating);
+        $resource->setReviews($reviews);
+
+        return $resource;
     }
 }

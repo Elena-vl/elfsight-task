@@ -37,15 +37,4 @@ class Controller extends BaseController
 
         return response()->json($data)->setStatusCode($status);
     }
-
-    /**
-     * @param  array|object  $data
-     * @param  int  $code
-     *
-     * @return JsonResponse
-     */
-    protected function renderApiResponse(array|object $data, int $code = 200): JsonResponse
-    {
-        return response()->json($data)->setStatusCode($code);
-    }
 }

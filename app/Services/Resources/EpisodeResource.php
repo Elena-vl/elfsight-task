@@ -3,9 +3,8 @@
 namespace App\Services\Resources;
 
 use App\Contracts\Resource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use NickBeen\RickAndMortyPhpApi\Dto\Episode;
 
 /**
  * Класс, реализующий логику преобразования данных для ответа
@@ -14,49 +13,42 @@ use NickBeen\RickAndMortyPhpApi\Dto\Episode;
  *
  * @package App\Services\Resources
  */
-class EpisodeResource implements Resource
+class EpisodeResource extends JsonResource implements Resource
 {
     /**
-     * Формирование ответа по коллекции ресурсов
-     *
-     * @param  array|object  $resource
-     *
-     * @return array
+     * @var mixed
      */
-    public function collection(array|object $resource): array
-    {
-        $resource = new Collection($resource);
-
-        if (!$resource->isEmpty()) {
-            $info = $resource->get('info');
-            $items = $resource->get('results');
-
-            $result = array_map(function ($episode) {
-                return $this->toArray($episode);
-            }, $items);
-
-            return [
-                'data' => $result,
-                'meta' => $info,
-            ];
-        }
-
-        return [];
-    }
+    private mixed $reviews = null;
+    /**
+     * @var mixed
+     */
+    private mixed $avgRating = null;
 
     /**
      * @inheritdoc
      */
-    public function toArray(object $episode): array
+    public function toArray($request): array
     {
-        return [
+        $data = [
             'type' => $this->getResourceType(),
-            'id' => $episode->id,
+            'id' => $this->id,
             'attributes' => [
-                'name' => $episode->name,
-                'air_date' => $episode->air_date,
+                'name' => $this->name,
+                'air_date' => $this->air_date,
             ],
         ];
+
+        if ($this->avgRating) {
+            Arr::set($data, 'attributes.average_rating', $this->avgRating);
+        }
+        if ($this->reviews) {
+            Arr::set(
+                $data, 'relationships.reviews',
+                ReviewsResource::collection($this->reviews)
+            );
+        }
+
+        return $data;
     }
 
     /**
@@ -67,25 +59,13 @@ class EpisodeResource implements Resource
         return 'episodes';
     }
 
-    /**
-     * Формирование ответа для одного ресурса
-     *
-     * @param  Episode  $resource
-     * @param  $reviews
-     * @param $avgRating
-     *
-     * @return array
-     */
-    public function instance(Episode $resource, $reviews, $avgRating): array
+    public function setReviews($reviews)
     {
-        $data = $this->toArray($resource);
-        Arr::set($data, 'attributes.average_rating', $avgRating);
+        $this->reviews = $reviews;
+    }
 
-        return [
-            'data' => $this->toArray($resource),
-            'relationships' => [
-                'reviews' => ReviewsResource::collection($reviews),
-            ],
-        ];
+    public function setAvgRating($avgRating)
+    {
+        $this->avgRating = $avgRating;
     }
 }

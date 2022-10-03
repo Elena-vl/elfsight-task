@@ -21,14 +21,12 @@ class EpisodeController extends Controller
      *
      * @param  FetchResourcesRequest  $request
      *
-     * @return array|object
+     * @return object
      */
-    public function index(FetchResourcesRequest $request): object|array
+    public function index(FetchResourcesRequest $request): object
     {
         try {
-            $result = $this->getApiService()->getListData($request);
-
-            return $this->renderApiResponse($result);
+            return $this->getApiService()->getListData($request);
         } catch (\Exception $e) {
             return $this->renderApiExceptionError(
                 $e, Response::HTTP_BAD_REQUEST
@@ -49,14 +47,12 @@ class EpisodeController extends Controller
      *
      * @param  int  $id
      *
-     * @return array|object
+     * @return object
      */
-    public function show(int $id): object|array
+    public function show(int $id): object
     {
         try {
-            $result = $this->getApiService()->getItemData($id);
-
-            return $this->renderApiResponse($result);
+            return $this->getApiService()->getItemData($id);
         } catch (NotFoundException $e) {
             return $this->renderApiExceptionError(
                 $e, Response::HTTP_NOT_FOUND
